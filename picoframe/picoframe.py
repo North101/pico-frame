@@ -35,7 +35,9 @@ class PicoFrame:
 
   async def download_random_image(self):
     print('download_random_image')
-    r = requests.get(self.image_url)
+    r = requests.get(self.image_url, headers={
+      'Authorization': f'Basic {config.API_KEY}',
+    })
     if r.status_code != 200:
       return
 
