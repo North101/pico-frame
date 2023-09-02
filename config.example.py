@@ -1,4 +1,5 @@
 AP_NAME = 'PicoFrame'
+AP_PASSWORD = None
 AP_DOMAIN = 'http://picoframe.net'
 AP_TEMPLATE_PATH = 'ap_templates'
 
