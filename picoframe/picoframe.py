@@ -7,6 +7,7 @@ from picographics import DISPLAY_INKY_FRAME_7 as DISPLAY
 from picographics import PicoGraphics
 
 import config
+import picoframe
 
 
 class PicoFrame:
@@ -50,14 +51,17 @@ class PicoFrame:
 
 async def async_loop(coro, delay: int):
   while True:
-    await asyncio.create_task(coro())
+    with picoframe.led_busy():
+      await asyncio.create_task(coro())
     await asyncio.sleep(delay)
 
 
 def app_mode():
-  inky_frame.set_time()
+  with picoframe.led_wifi():
+    with picoframe.led_busy():
+      inky_frame.set_time()
 
-  frame = PicoFrame()
-  loop = asyncio.get_event_loop()
-  loop.create_task(async_loop(frame.download_random_image, config.IMAGE_UPDATE))
-  loop.run_forever()
+    frame = PicoFrame()
+    loop = asyncio.get_event_loop()
+    loop.create_task(async_loop(frame.download_random_image, config.IMAGE_UPDATE))
+    loop.run_forever()

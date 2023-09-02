@@ -1,3 +1,4 @@
+import inky_frame
 import phew
 import sdcard
 import ujson as json
@@ -19,6 +20,22 @@ def machine_reset():
   time.sleep(1)
   print('Resetting...')
   machine.reset()
+
+
+class led_busy:
+  def __enter__(self):
+    inky_frame.led_busy.on()
+
+  def __exit__(self, *args, **kwargs):
+    inky_frame.led_busy.off()
+
+
+class led_wifi:
+  def __enter__(self):
+    inky_frame.led_wifi.on()
+
+  def __exit__(self, *args, **kwargs):
+    inky_frame.led_wifi.off()
 
 
 def read_wifi_credentials() -> None|tuple[str, str]:

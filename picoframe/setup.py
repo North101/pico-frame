@@ -10,6 +10,7 @@ from picographics import DISPLAY_INKY_FRAME_7 as DISPLAY
 from picographics import PicoGraphics
 
 import config
+import picoframe
 from picoframe.util import machine_reset
 
 
@@ -52,12 +53,13 @@ def hotspot_hotspot_detect(request):
 def ap_configure(request):
   print('Saving wifi credentials...')
 
-  with open(config.WIFI_FILE, 'w') as f:
-    json.dump(request.form, f)
+  with picoframe.led_busy():
+    with open(config.WIFI_FILE, 'w') as f:
+      json.dump(request.form, f)
 
-  # Reboot from new thread after we have responded to the user.
-  _thread.start_new_thread(machine_reset, ())
-  return render_template(f'{config.AP_TEMPLATE_PATH}/configured.html', ssid=request.form['ssid'])
+    # Reboot from new thread after we have responded to the user.
+    _thread.start_new_thread(machine_reset, ())
+    return render_template(f'{config.AP_TEMPLATE_PATH}/configured.html', ssid=request.form['ssid'])
 
 
 @server.catchall()
@@ -94,30 +96,42 @@ def draw_qr_code(graphics: PicoGraphics, code: qrcode.QRCode, ox: int, oy: int, 
     qr_size, module_size = measure_qr_code(size - (border * 2), code)
     offset = (size - qr_size) // 2
     graphics.set_pen(inky_frame.WHITE)
-    graphics.rectangle(ox + offset - border, oy + offset - border, qr_size + (border * 2), qr_size + (border * 2))
-    graphics.set_pen(0)
+    graphics.rectangle(
+      ox + offset - border,
+      oy + offset - border,
+      qr_size + (border * 2),
+      qr_size + (border * 2),
+    )
+    graphics.set_pen(inky_frame.BLACK)
     for x in range(qr_size):
       for y in range(qr_size):
         if code.get_module(x, y):
-          graphics.rectangle(ox + offset + x * module_size, oy + offset + y * module_size, module_size, module_size)
+          graphics.rectangle(
+            ox + offset + x * module_size,
+            oy + offset + y * module_size,
+            module_size,
+            module_size,
+          )
 
 
 def setup_mode():
   print('Entering setup mode...')
 
-  graphics = PicoGraphics(DISPLAY)
-  graphics.set_pen(inky_frame.WHITE)
+  with picoframe.led_busy():
+    graphics = PicoGraphics(DISPLAY)
+    graphics.set_pen(inky_frame.WHITE)
 
-  center_text(graphics, 'Connect to AP', 800, ((480 - 200) // 2) - 60, scale=6)
-  center_text(graphics, config.AP_NAME, 800, ((480 - 200) // 2), scale=6)
+    center_text(graphics, 'Connect to AP', 800, ((480 - 200) // 2) - 60, scale=6)
+    center_text(graphics, config.AP_NAME, 800, ((480 - 200) // 2), scale=6)
 
-  code = qrcode.QRCode()
-  code.set_text(gen_wifi_qr_text(config.AP_NAME, config.AP_PASSWORD))
-  draw_qr_code(graphics, code, (800 - 208) // 2, ((480 - 208) // 2) + 60, 208, 4)
+    code = qrcode.QRCode()
+    code.set_text(gen_wifi_qr_text(config.AP_NAME, config.AP_PASSWORD))
+    draw_qr_code(graphics, code, (800 - 208) // 2, ((480 - 208) // 2) + 60, 208, 4)
 
-  graphics.update()
+    graphics.update()
 
-  ap = phew.access_point(config.AP_NAME, config.AP_PASSWORD)
-  ip = ap.ifconfig()[0]
-  dns.run_catchall(ip)
-  server.run()
+  with picoframe.led_wifi():
+    ap = phew.access_point(config.AP_NAME, config.AP_PASSWORD)
+    ip = ap.ifconfig()[0]
+    dns.run_catchall(ip)
+    server.run()
