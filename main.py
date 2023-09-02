@@ -4,6 +4,7 @@ import picoframe
 
 
 def main():
+  inky_frame.pcf_to_pico_rtc()
   #picoframe.mount_sd()
 
   with picoframe.led_busy():
