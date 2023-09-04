@@ -5,7 +5,10 @@ import picoframe
 
 def main():
   inky_frame.pcf_to_pico_rtc()
-  #picoframe.mount_sd()
+  try:
+    picoframe.mount_sd()
+  except Exception as e:
+    print(e)
 
   with picoframe.led_busy():
     wifi_credentials = picoframe.read_wifi_credentials()
