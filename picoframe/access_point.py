@@ -114,7 +114,7 @@ def draw_qr_code(graphics: PicoGraphics, code: qrcode.QRCode, ox: int, oy: int, 
           )
 
 
-def setup_mode():
+def access_point_mode():
   print('Entering setup mode...')
 
   with picoframe.led_busy():

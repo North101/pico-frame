@@ -55,7 +55,7 @@ def loop(func, minutes: int):
     inky_frame.sleep_for(minutes)
 
 
-def app_mode():
+def picture_mode():
   with picoframe.led_wifi():
     with picoframe.led_busy():
       inky_frame.set_time()

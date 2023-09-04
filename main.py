@@ -16,13 +16,13 @@ def main():
     with picoframe.led_busy():
       connected = picoframe.connect_to_wifi(*wifi_credentials)
     if connected:
-      picoframe.app_mode()
+      picoframe.picture_mode()
     else:
       print('Bad wifi connection!')
       print(wifi_credentials)
-      picoframe.setup_mode()
+      picoframe.access_point_mode()
   else:
-    picoframe.setup_mode()
+    picoframe.access_point_mode()
 
 
 if __name__ == '__main__':
