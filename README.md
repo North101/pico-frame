@@ -6,7 +6,7 @@ It will grab a random image from the server every hour (by default) and display 
 
 If it is unable to connect to wifi or the A button is pressed on boot, it will enter Acess Point mode allowing you to connect to it and enter the wifi details.
 
-### Installing
+### Installing via mpremote
 
 Install `mpremote`
 ```bash
@@ -49,3 +49,7 @@ IMAGE_DIR = '/images'
 # How often to display a new image (in minutes)
 IMAGE_UPDATE_INTERVAL = 60
 ```
+
+### Frame Kit
+
+I've designed a [frame kit](frame_kit/README.md) to allow the Inky Frame 7.3 to be displayed in a picture frame.
